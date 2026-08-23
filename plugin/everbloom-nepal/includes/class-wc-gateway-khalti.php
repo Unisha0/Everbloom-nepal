@@ -1,0 +1,73 @@
+<?php
+/**
+ * Khalti — manual/offline payment gateway (see class-wc-gateway-esewa.php for notes).
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class WC_Gateway_Khalti extends WC_Payment_Gateway {
+
+	public function __construct() {
+		$this->id                 = 'khalti';
+		$this->icon               = '';
+		$this->has_fields         = false;
+		$this->method_title       = __( 'Khalti', 'everbloom-nepal' );
+		$this->method_description = __( 'Accept manual Khalti payments. This is a demo store — no real payment is charged; customers receive payment instructions after placing the order.', 'everbloom-nepal' );
+
+		$this->init_form_fields();
+		$this->init_settings();
+
+		$this->title        = $this->get_option( 'title' );
+		$this->description  = $this->get_option( 'description' );
+		$this->instructions = $this->get_option( 'instructions', $this->description );
+
+		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
+		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
+	}
+
+	public function init_form_fields() {
+		$this->form_fields = array(
+			'enabled'      => array(
+				'title'   => __( 'Enable/Disable', 'everbloom-nepal' ),
+				'type'    => 'checkbox',
+				'label'   => __( 'Enable Khalti payments', 'everbloom-nepal' ),
+				'default' => 'yes',
+			),
+			'title'        => array(
+				'title'       => __( 'Title', 'everbloom-nepal' ),
+				'type'        => 'text',
+				'default'     => __( 'Khalti', 'everbloom-nepal' ),
+			),
+			'description'  => array(
+				'title'       => __( 'Description', 'everbloom-nepal' ),
+				'type'        => 'textarea',
+				'default'     => __( 'Pay via Khalti. This is a demo store — no real payment will be charged. You will receive payment instructions with your order confirmation.', 'everbloom-nepal' ),
+			),
+			'instructions' => array(
+				'title'       => __( 'Instructions', 'everbloom-nepal' ),
+				'type'        => 'textarea',
+				'default'     => __( 'Please complete your payment via Khalti using your order number as the reference. Our team will confirm your payment shortly.', 'everbloom-nepal' ),
+			),
+		);
+	}
+
+	public function process_payment( $order_id ) {
+		$order = wc_get_order( $order_id );
+		$order->update_status( 'on-hold', __( 'Awaiting Khalti payment confirmation.', 'everbloom-nepal' ) );
+		wc_reduce_stock_levels( $order_id );
+		WC()->cart->empty_cart();
+
+		return array(
+			'result'   => 'success',
+			'redirect' => $this->get_return_url( $order ),
+		);
+	}
+
+	public function thankyou_page() {
+		if ( $this->instructions ) {
+			echo wp_kses_post( wpautop( $this->instructions ) );
+		}
+	}
+}
