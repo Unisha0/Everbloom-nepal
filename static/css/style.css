@@ -1,0 +1,368 @@
+/* ===========================================================
+   Everbloom Nepal — custom design layer (works alongside Tailwind CDN)
+   Soft pastel, premium floral aesthetic.
+=========================================================== */
+
+:root {
+  --eb-blush: #fbeef0;
+  --eb-blush-deep: #f3d9de;
+  --eb-rose: #c76b7f;
+  --eb-rose-dark: #a8465c;
+  --eb-cream: #fdf9f4;
+  --eb-cream-deep: #f7efe4;
+  --eb-sage: #8a9a7e;
+  --eb-sage-light: #e7ede2;
+  --eb-ink: #3a2e2f;
+  --eb-ink-soft: #6b5c5d;
+  --eb-gold: #c8a96a;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  color: var(--eb-ink);
+  background-color: var(--eb-cream);
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.text-eb-rose { color: var(--eb-rose); }
+.text-eb-rose-dark { color: var(--eb-rose-dark); }
+.text-eb-sage { color: var(--eb-sage); }
+.text-eb-gold { color: var(--eb-gold); }
+.text-eb-ink-soft { color: var(--eb-ink-soft); }
+.bg-eb-blush { background-color: var(--eb-blush); }
+.bg-eb-blush-deep { background-color: var(--eb-blush-deep); }
+.bg-eb-cream { background-color: var(--eb-cream); }
+.bg-eb-cream-deep { background-color: var(--eb-cream-deep); }
+.bg-eb-rose { background-color: var(--eb-rose); }
+.bg-eb-sage-light { background-color: var(--eb-sage-light); }
+.border-eb-rose { border-color: var(--eb-rose); }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 0.85rem 1.9rem;
+  border-radius: 999px;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--eb-rose), var(--eb-rose-dark));
+  color: #fff;
+  box-shadow: 0 8px 20px -8px rgba(168, 70, 92, 0.55);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px -8px rgba(168, 70, 92, 0.65);
+}
+.btn-outline {
+  background: transparent;
+  border-color: var(--eb-ink);
+  color: var(--eb-ink);
+}
+.btn-outline:hover {
+  background: var(--eb-ink);
+  color: #fff;
+  transform: translateY(-2px);
+}
+.btn-outline-light {
+  background: rgba(255,255,255,0.15);
+  border-color: #fff;
+  color: #fff;
+  backdrop-filter: blur(6px);
+}
+.btn-outline-light:hover {
+  background: #fff;
+  color: var(--eb-rose-dark);
+}
+.btn-sm { padding: 0.55rem 1.3rem; font-size: 0.875rem; }
+.btn-block { width: 100%; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+/* Cards */
+.eb-card {
+  background: #fff;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(58, 46, 47, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.eb-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px -16px rgba(58, 46, 47, 0.22);
+}
+
+.product-card-img-wrap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  background: var(--eb-blush);
+}
+.product-card-img-wrap img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.6s ease;
+}
+.eb-card:hover .product-card-img-wrap img { transform: scale(1.08); }
+
+/* Star rating */
+.star-rating {
+  position: relative;
+  display: inline-block;
+  font-size: 0.95rem;
+  line-height: 1;
+  white-space: nowrap;
+  color: #dcd3c8;
+}
+.star-rating .stars-filled {
+  position: absolute;
+  top: 0; left: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--eb-gold);
+}
+
+/* Nav */
+.nav-link {
+  position: relative;
+  font-weight: 500;
+  color: var(--eb-ink);
+  transition: color 0.2s ease;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -4px;
+  width: 0; height: 2px;
+  background: var(--eb-rose);
+  transition: width 0.25s ease;
+}
+.nav-link:hover { color: var(--eb-rose-dark); }
+.nav-link:hover::after { width: 100%; }
+.nav-link.active { color: var(--eb-rose-dark); }
+.nav-link.active::after { width: 100%; }
+
+/* Hero */
+.hero-section {
+  position: relative;
+  overflow: hidden;
+}
+.hero-bg-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(58,20,28,0.62) 0%, rgba(58,20,28,0.38) 45%, rgba(58,20,28,0.12) 100%);
+}
+@media (max-width: 768px) {
+  .hero-overlay { background: linear-gradient(180deg, rgba(58,20,28,0.35) 0%, rgba(58,20,28,0.72) 75%); }
+}
+
+.petal-float {
+  position: absolute;
+  opacity: 0.5;
+  animation: petalFloat 9s ease-in-out infinite;
+}
+@keyframes petalFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-18px) rotate(8deg); }
+}
+
+/* Fade-in-up utility for scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Form inputs */
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e6dad2;
+  border-radius: 0.75rem;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.form-input:focus {
+  outline: none;
+  border-color: var(--eb-rose);
+  box-shadow: 0 0 0 3px rgba(199, 107, 127, 0.15);
+}
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--eb-ink-soft);
+  margin-bottom: 0.35rem;
+}
+
+.newsletter-input {
+  flex: 1;
+  padding: 0.9rem 1.25rem;
+  border-radius: 999px 0 0 999px;
+  border: none;
+  font-family: inherit;
+}
+.newsletter-input:focus { outline: none; }
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+}
+.badge-bestseller { background: var(--eb-rose); color: #fff; }
+.badge-new { background: var(--eb-sage); color: #fff; }
+.badge-sale { background: #e0663a; color: #fff; }
+
+/* Wishlist heart button */
+.wishlist-btn {
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.92);
+  border-radius: 50%;
+  color: var(--eb-ink-soft);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+}
+.wishlist-btn:hover { color: var(--eb-rose-dark); transform: scale(1.08); }
+.wishlist-btn.is-active { color: var(--eb-rose-dark); }
+.wishlist-btn.is-active i { font-weight: 900; }
+
+/* Quantity stepper */
+.qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #e6dad2;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.qty-stepper button {
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--eb-cream-deep);
+  color: var(--eb-ink);
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.qty-stepper button:hover { background: var(--eb-blush-deep); }
+.qty-stepper input {
+  width: 44px;
+  text-align: center;
+  border: none;
+  background: transparent;
+  font-weight: 600;
+}
+.qty-stepper input:focus { outline: none; }
+
+/* Toast */
+#toast-container {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.toast {
+  background: #fff;
+  border-left: 4px solid var(--eb-rose);
+  border-radius: 0.75rem;
+  padding: 0.9rem 1.2rem;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+  font-size: 0.9rem;
+  min-width: 260px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  animation: toastIn 0.3s ease;
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.toast.toast-out { animation: toastOut 0.3s ease forwards; }
+@keyframes toastOut {
+  to { opacity: 0; transform: translateX(30px); }
+}
+
+/* Divider flourish */
+.eb-divider {
+  display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+  color: var(--eb-rose);
+}
+.eb-divider::before, .eb-divider::after {
+  content: '';
+  height: 1px; width: 40px;
+  background: var(--eb-blush-deep);
+}
+
+/* Category pill scroller on mobile */
+.scroll-x {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 0.25rem;
+}
+.scroll-x::-webkit-scrollbar { display: none; }
+
+/* Star select for review form */
+.star-select { display: flex; gap: 0.4rem; font-size: 1.5rem; }
+.star-select label { cursor: pointer; color: #dcd3c8; }
+.star-select input { display: none; }
+
+/* Misc */
+.section-eyebrow {
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.skeleton-loader { animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }

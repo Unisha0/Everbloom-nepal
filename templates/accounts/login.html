@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Login — Everbloom Nepal{% endblock %}
+
+{% block content %}
+<section class="min-h-[70vh] flex items-center py-16">
+  <div class="max-w-md mx-auto w-full px-4">
+    <div class="text-center mb-8">
+      <i class="fa-solid fa-spa text-eb-rose text-3xl mb-3"></i>
+      <h1 class="font-display text-3xl font-bold text-ink">Welcome Back</h1>
+      <p class="text-ink-soft mt-2 text-sm">Login to your Everbloom account to continue.</p>
+    </div>
+    <div class="eb-card p-6 sm:p-8">
+      <form method="post">
+        {% csrf_token %}
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+        <div class="mb-4">
+          <label class="form-label">Username or Email</label>
+          {{ form.username }}
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Password</label>
+          {{ form.password }}
+        </div>
+        {% if form.errors %}
+        <p class="text-red-500 text-sm mt-2"><i class="fa-solid fa-circle-exclamation"></i> Incorrect username/email or password.</p>
+        {% endif %}
+        <button type="submit" class="btn btn-primary btn-block mt-6">Login</button>
+      </form>
+      <p class="text-center text-sm text-ink-soft mt-6">
+        Don't have an account? <a href="{% url 'accounts:signup' %}" class="text-eb-rose-dark font-semibold">Sign Up</a>
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

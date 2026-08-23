@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+{% load static shop_extras %}
+
+{% block title %}Everbloom Nepal — Flowers That Make Every Moment Bloom{% endblock %}
+
+{% block content %}
+
+<!-- ============ HERO ============ -->
+<section class="hero-section min-h-[88vh] flex items-center">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/DFC_0794_Bright_bouquet_of_pink_roses_and_a_cheerful_sunflower_arranged_with_greenery_on_a_golden_surface.jpg/1920px-DFC_0794_Bright_bouquet_of_pink_roses_and_a_cheerful_sunflower_arranged_with_greenery_on_a_golden_surface.jpg" alt="Fresh floral bouquets" class="hero-bg-img">
+  <div class="hero-overlay"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 w-full">
+    <div class="max-w-xl">
+      <span class="inline-flex items-center gap-2 text-gold text-xs font-semibold uppercase tracking-[0.2em] mb-5">
+        <i class="fa-solid fa-seedling"></i> Nepal's Premium Florist
+      </span>
+      <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+        Let Every Moment <span class="text-blush italic">Bloom.</span>
+      </h1>
+      <p class="text-white/85 text-base sm:text-lg mb-8 max-w-md leading-relaxed">
+        Discover thoughtfully arranged flowers, handcrafted bouquets, and beautiful gifts delivered with love across Nepal.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a href="{% url 'shop:shop_list' %}" class="btn btn-primary">
+          Shop Flowers <i class="fa-solid fa-arrow-right text-sm"></i>
+        </a>
+        <a href="#collections" class="btn btn-outline-light">
+          Explore Collections
+        </a>
+      </div>
+      <div class="flex items-center gap-6 mt-12">
+        <div>
+          <p class="font-display text-2xl font-bold text-white">15,000+</p>
+          <p class="text-white/60 text-xs uppercase tracking-wide">Happy Customers</p>
+        </div>
+        <div class="w-px h-10 bg-white/25"></div>
+        <div>
+          <p class="font-display text-2xl font-bold text-white">4.8<i class="fa-solid fa-star text-gold text-sm ml-1"></i></p>
+          <p class="text-white/60 text-xs uppercase tracking-wide">Average Rating</p>
+        </div>
+        <div class="w-px h-10 bg-white/25"></div>
+        <div>
+          <p class="font-display text-2xl font-bold text-white">Same-Day</p>
+          <p class="text-white/60 text-xs uppercase tracking-wide">Kathmandu Delivery</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURED COLLECTIONS ============ -->
+<section id="collections" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
+  <div class="text-center max-w-xl mx-auto mb-14 reveal">
+    <p class="section-eyebrow text-eb-rose mb-2">Shop by Category</p>
+    <h2 class="font-display text-3xl sm:text-4xl font-bold text-ink">Featured Collections</h2>
+    <p class="text-ink-soft mt-3">Explore our most-loved flower collections, freshly arranged by our in-house florists.</p>
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
+    {% for cat in featured_categories %}
+    {% include "shop/includes/category_card.html" with category=cat %}
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ============ BEST SELLERS ============ -->
+<section class="bg-eb-blush/40 py-20 sm:py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-wrap items-end justify-between gap-4 mb-12 reveal">
+      <div>
+        <p class="section-eyebrow text-eb-rose mb-2">Customer Favourites</p>
+        <h2 class="font-display text-3xl sm:text-4xl font-bold text-ink">Best Sellers</h2>
+      </div>
+      <a href="{% url 'shop:shop_list' %}?sort=bestseller" class="nav-link font-medium">View All <i class="fa-solid fa-arrow-right text-xs ml-1"></i></a>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+      {% for product in bestsellers %}
+      <div class="reveal">{% include "shop/includes/product_card.html" %}</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ============ SHOP BY OCCASION ============ -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
+  <div class="text-center max-w-xl mx-auto mb-14 reveal">
+    <p class="section-eyebrow text-eb-rose mb-2">For Every Celebration</p>
+    <h2 class="font-display text-3xl sm:text-4xl font-bold text-ink">Shop by Occasion</h2>
+    <p class="text-ink-soft mt-3">From birthdays to Dashain-Tihar, find the perfect bouquet for every moment that matters.</p>
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
+    {% for cat in occasion_categories %}
+    {% include "shop/includes/category_card.html" with category=cat %}
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ============ WHY CHOOSE EVERBLOOM ============ -->
+<section class="bg-ink py-20 sm:py-24 relative overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div class="text-center max-w-xl mx-auto mb-14 reveal">
+      <p class="section-eyebrow text-gold mb-2">Our Promise</p>
+      <h2 class="font-display text-3xl sm:text-4xl font-bold text-white">Why Choose Everbloom?</h2>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+      <div class="text-center reveal">
+        <div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-5">
+          <i class="fa-solid fa-seedling text-gold text-2xl"></i>
+        </div>
+        <h3 class="font-display text-lg font-semibold text-white mb-2">Farm-Fresh Flowers</h3>
+        <p class="text-white/60 text-sm leading-relaxed">Sourced daily and hand-arranged for lasting freshness and fragrance.</p>
+      </div>
+      <div class="text-center reveal">
+        <div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-5">
+          <i class="fa-solid fa-truck-fast text-gold text-2xl"></i>
+        </div>
+        <h3 class="font-display text-lg font-semibold text-white mb-2">Same-Day Delivery</h3>
+        <p class="text-white/60 text-sm leading-relaxed">Order before 3 PM for same-day delivery across the Kathmandu Valley.</p>
+      </div>
+      <div class="text-center reveal">
+        <div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-5">
+          <i class="fa-solid fa-hand-holding-heart text-gold text-2xl"></i>
+        </div>
+        <h3 class="font-display text-lg font-semibold text-white mb-2">Handcrafted with Care</h3>
+        <p class="text-white/60 text-sm leading-relaxed">Every bouquet is thoughtfully arranged by our expert florists.</p>
+      </div>
+      <div class="text-center reveal">
+        <div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-5">
+          <i class="fa-solid fa-shield-heart text-gold text-2xl"></i>
+        </div>
+        <h3 class="font-display text-lg font-semibold text-white mb-2">Freshness Guarantee</h3>
+        <p class="text-white/60 text-sm leading-relaxed">Not happy with your bouquet? We'll make it right — no questions asked.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NEW ARRIVALS ============ -->
+{% if new_arrivals %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
+  <div class="flex flex-wrap items-end justify-between gap-4 mb-12 reveal">
+    <div>
+      <p class="section-eyebrow text-eb-rose mb-2">Just In</p>
+      <h2 class="font-display text-3xl sm:text-4xl font-bold text-ink">New Arrivals</h2>
+    </div>
+    <a href="{% url 'shop:shop_list' %}?sort=newest" class="nav-link font-medium">View All <i class="fa-solid fa-arrow-right text-xs ml-1"></i></a>
+  </div>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+    {% for product in new_arrivals %}
+    <div class="reveal">{% include "shop/includes/product_card.html" %}</div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- ============ CUSTOMER REVIEWS ============ -->
+<section class="bg-eb-blush/40 py-20 sm:py-24 overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-wrap items-end justify-between gap-4 mb-12 reveal">
+      <div class="text-center sm:text-left w-full sm:w-auto">
+        <p class="section-eyebrow text-eb-rose mb-2">Loved Across Nepal</p>
+        <h2 class="font-display text-3xl sm:text-4xl font-bold text-ink">Customer Reviews</h2>
+      </div>
+      <div class="hidden sm:flex gap-2">
+        <button id="testimonial-prev" class="w-10 h-10 rounded-full border border-ink/15 flex items-center justify-center hover:bg-ink hover:text-white transition"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+        <button id="testimonial-next" class="w-10 h-10 rounded-full border border-ink/15 flex items-center justify-center hover:bg-ink hover:text-white transition"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+      </div>
+    </div>
+    <div id="testimonial-track" class="flex gap-5 overflow-x-auto scroll-x pb-2">
+      {% for review in reviews %}
+      <div class="eb-card p-6 min-w-[300px] sm:min-w-[320px] flex-shrink-0 reveal">
+        <div class="star-rating mb-3">
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+          <div class="stars-filled" style="width: {% widthratio review.rating 5 100 %}%">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+          </div>
+        </div>
+        <p class="text-ink-soft text-sm leading-relaxed mb-5 line-clamp-3">&ldquo;{{ review.comment }}&rdquo;</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-eb-rose text-white flex items-center justify-center font-display font-semibold text-sm">
+            {{ review.name|first }}
+          </div>
+          <div>
+            <p class="font-semibold text-ink text-sm">{{ review.name }}</p>
+            <p class="text-xs text-ink-soft">on {{ review.product.name }}</p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ============ DELIVERY INFORMATION ============ -->
+<section id="delivery-info" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
+  <div class="grid lg:grid-cols-2 gap-12 items-center">
+    <div class="reveal">
+      <p class="section-eyebrow text-eb-rose mb-2">Delivery Across Nepal</p>
+      <h2 class="font-display text-3xl sm:text-4xl font-bold text-ink mb-6">Fresh Flowers, Delivered With Care</h2>
+      <div class="space-y-5">
+        <div class="flex gap-4">
+          <div class="w-11 h-11 rounded-full bg-eb-blush flex items-center justify-center flex-shrink-0">
+            <i class="fa-solid fa-city text-eb-rose-dark"></i>
+          </div>
+          <div>
+            <h4 class="font-semibold text-ink mb-1">Kathmandu Valley</h4>
+            <p class="text-ink-soft text-sm">Same-day delivery available for orders placed before 3 PM. Delivery fee: {{ 100|npr }}, free above {{ FREE_DELIVERY_THRESHOLD }}.</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <div class="w-11 h-11 rounded-full bg-eb-blush flex items-center justify-center flex-shrink-0">
+            <i class="fa-solid fa-map-location-dot text-eb-rose-dark"></i>
+          </div>
+          <div>
+            <h4 class="font-semibold text-ink mb-1">Major Cities Nationwide</h4>
+            <p class="text-ink-soft text-sm">2–3 day delivery to Pokhara, Chitwan, Biratnagar, Butwal and other major cities across all 7 provinces.</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <div class="w-11 h-11 rounded-full bg-eb-blush flex items-center justify-center flex-shrink-0">
+            <i class="fa-solid fa-wallet text-eb-rose-dark"></i>
+          </div>
+          <div>
+            <h4 class="font-semibold text-ink mb-1">Flexible Payment Options</h4>
+            <p class="text-ink-soft text-sm">Pay easily with eSewa, Khalti, IME Pay, bank transfer, or Cash on Delivery.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="relative reveal">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/8/8d/The_Dwarika%27s_Hotel%2C_Kathmandu_Floating_Flowers_4531135816.jpg" alt="Flowers delivered with care in Nepal" class="rounded-3xl w-full h-[420px] object-cover">
+      <div class="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-xl p-5 flex items-center gap-4 max-w-[240px]">
+        <i class="fa-solid fa-circle-check text-eb-sage text-2xl"></i>
+        <p class="text-sm text-ink-soft"><span class="font-semibold text-ink">15,000+</span> orders delivered fresh across Nepal</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,11 @@
+<a href="{{ category.get_absolute_url }}" class="eb-card group block reveal">
+  <div class="relative aspect-[4/5] overflow-hidden">
+    <img src="{{ category.image_url }}" alt="{{ category.name }}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+    <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-transparent"></div>
+    <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
+      <i class="{{ category.icon }} text-gold mb-1.5 block text-lg"></i>
+      <h3 class="font-display text-lg sm:text-xl font-semibold">{{ category.name }}</h3>
+      {% if category.nepali_name %}<p class="text-xs text-white/70 mt-0.5">{{ category.nepali_name }}</p>{% endif %}
+    </div>
+  </div>
+</a>

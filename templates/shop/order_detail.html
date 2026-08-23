@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load shop_extras %}
+{% block title %}Order {{ order.order_number }} — Everbloom Nepal{% endblock %}
+
+{% block content %}
+<section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+  <nav class="text-xs text-ink-soft mb-4">
+    <a href="{% url 'shop:order_history' %}" class="hover:text-eb-rose-dark">My Orders</a> / <span class="text-ink">{{ order.order_number }}</span>
+  </nav>
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-10">
+    <div>
+      <h1 class="font-display text-2xl sm:text-3xl font-bold text-ink">Order {{ order.order_number }}</h1>
+      <p class="text-ink-soft text-sm mt-1">Placed on {{ order.created_at|date:"F d, Y" }}</p>
+    </div>
+    <span class="text-xs font-semibold uppercase tracking-wide px-3 py-1.5 rounded-full
+      {% if order.status == 'delivered' %}bg-sage-light text-eb-sage
+      {% elif order.status == 'cancelled' %}bg-red-50 text-red-500
+      {% else %}bg-eb-blush text-eb-rose-dark{% endif %}">
+      {{ order.get_status_display }}
+    </span>
+  </div>
+
+  <!-- Status timeline -->
+  <div class="eb-card p-6 sm:p-8 mb-8">
+    <div class="flex items-center justify-between max-w-2xl mx-auto">
+      {% for step_label in status_steps %}
+      <div class="flex-1 flex flex-col items-center relative">
+        {% if not forloop.first %}<div class="absolute top-4 right-1/2 w-full h-0.5 {% if order.status != 'cancelled' %}bg-eb-rose{% else %}bg-blush-deep{% endif %} -z-10"></div>{% endif %}
+        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold
+          {% if order.status != 'cancelled' %}bg-eb-rose text-white{% else %}bg-blush-deep text-ink-soft{% endif %}">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <p class="text-[0.65rem] text-ink-soft mt-2 text-center">{{ step_label }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="eb-card p-6 sm:p-8">
+    <div class="flex flex-wrap justify-between gap-4 pb-5 mb-5 border-b border-blush-deep">
+      <div>
+        <p class="text-xs text-ink-soft uppercase tracking-wide mb-1">Delivery Address</p>
+        <p class="text-sm text-ink font-medium">{{ order.street_address }}, {{ order.city }}</p>
+        <p class="text-sm text-ink-soft">{{ order.district }}, {{ order.get_province_display }}</p>
+        <p class="text-sm text-ink-soft mt-1"><i class="fa-solid fa-phone text-xs mr-1"></i>{{ order.phone }}</p>
+      </div>
+      <div class="sm:text-right">
+        <p class="text-xs text-ink-soft uppercase tracking-wide mb-1">Payment</p>
+        <p class="text-sm text-ink font-medium">{{ order.get_payment_method_display }}</p>
+        <p class="text-xs mt-1 {% if order.payment_status == 'paid' %}text-eb-sage{% else %}text-eb-gold{% endif %} font-semibold uppercase">{{ order.get_payment_status_display }}</p>
+      </div>
+    </div>
+
+    <div class="space-y-4 mb-5">
+      {% for item in order.items.all %}
+      <div class="flex gap-3 items-center">
+        <div class="relative w-14 h-14 rounded-lg overflow-hidden bg-eb-blush flex-shrink-0">
+          <img src="{{ item.image_url }}" alt="{{ item.product_name }}" class="w-full h-full object-cover">
+          <span class="absolute -top-1.5 -right-1.5 bg-eb-rose text-white text-[0.65rem] w-5 h-5 rounded-full flex items-center justify-center font-semibold">{{ item.quantity }}</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm text-ink font-medium truncate">{{ item.product_name }}</p>
+          <p class="text-xs text-ink-soft">{{ item.price|npr }} each</p>
+        </div>
+        <p class="text-sm font-semibold text-ink">{{ item.subtotal|npr }}</p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="border-t border-blush-deep pt-4 space-y-2 text-sm">
+      <div class="flex justify-between text-ink-soft"><span>Subtotal</span><span class="text-ink font-medium">{{ order.subtotal|npr }}</span></div>
+      <div class="flex justify-between text-ink-soft"><span>Delivery Fee</span><span class="text-ink font-medium">{% if order.delivery_fee == 0 %}FREE{% else %}{{ order.delivery_fee|npr }}{% endif %}</span></div>
+      <div class="flex justify-between items-baseline pt-2">
+        <span class="font-display font-semibold text-ink">Total</span>
+        <span class="font-display text-xl font-bold text-ink">{{ order.total|npr }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

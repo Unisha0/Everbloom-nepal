@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load shop_extras %}
+{% block title %}My Profile — Everbloom Nepal{% endblock %}
+
+{% block content %}
+<section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+  <h1 class="font-display text-3xl sm:text-4xl font-bold text-ink mb-2">My Profile</h1>
+  <p class="text-ink-soft mb-10">Manage your account details and default delivery address.</p>
+
+  <div class="grid lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-1 space-y-6">
+      <div class="eb-card p-6 text-center">
+        <div class="w-20 h-20 rounded-full bg-eb-rose text-white flex items-center justify-center font-display text-2xl font-semibold mx-auto mb-4">
+          {{ user.first_name|first|default:user.username|first|upper }}
+        </div>
+        <h3 class="font-semibold text-ink">{{ user.get_full_name|default:user.username }}</h3>
+        <p class="text-xs text-ink-soft mt-1">{{ user.email }}</p>
+        <p class="text-xs text-ink-soft mt-3">Member since {{ user.date_joined|date:"M Y" }}</p>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <a href="{% url 'shop:order_history' %}" class="eb-card p-4 text-center">
+          <i class="fa-solid fa-bag-shopping text-eb-rose-dark text-xl mb-2"></i>
+          <p class="text-xs text-ink-soft">Orders</p>
+          <p class="font-display font-bold text-ink">{{ recent_orders.count }}</p>
+        </a>
+        <a href="{% url 'shop:wishlist' %}" class="eb-card p-4 text-center">
+          <i class="fa-solid fa-heart text-eb-rose-dark text-xl mb-2"></i>
+          <p class="text-xs text-ink-soft">Wishlist</p>
+          <p class="font-display font-bold text-ink">{{ wishlist_count }}</p>
+        </a>
+      </div>
+    </div>
+
+    <div class="lg:col-span-2 space-y-8">
+      <div class="eb-card p-6 sm:p-8">
+        <h2 class="font-display text-lg font-semibold text-ink mb-5">Default Delivery Address</h2>
+        <form method="post">
+          {% csrf_token %}
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label class="form-label">Phone Number</label>
+              {{ form.phone }}
+            </div>
+            <div>
+              <label class="form-label">Province</label>
+              {{ form.province }}
+            </div>
+            <div>
+              <label class="form-label">District</label>
+              {{ form.district }}
+            </div>
+            <div>
+              <label class="form-label">City / Area</label>
+              {{ form.city }}
+            </div>
+            <div class="sm:col-span-2">
+              <label class="form-label">Street Address</label>
+              {{ form.street_address }}
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary mt-6">Save Changes</button>
+        </form>
+      </div>
+
+      <div class="eb-card p-6 sm:p-8">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="font-display text-lg font-semibold text-ink">Recent Orders</h2>
+          <a href="{% url 'shop:order_history' %}" class="text-sm text-eb-rose-dark font-medium">View All</a>
+        </div>
+        {% if recent_orders %}
+        <div class="space-y-3">
+          {% for order in recent_orders %}
+          <a href="{% url 'shop:order_detail' order.order_number %}" class="flex items-center justify-between py-3 border-b border-blush-deep last:border-0">
+            <div>
+              <p class="text-sm font-medium text-ink">{{ order.order_number }}</p>
+              <p class="text-xs text-ink-soft">{{ order.created_at|date:"M d, Y" }}</p>
+            </div>
+            <p class="font-semibold text-ink text-sm">{{ order.total|npr }}</p>
+          </a>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-sm text-ink-soft">You haven't placed any orders yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

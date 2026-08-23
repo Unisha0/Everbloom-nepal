@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load shop_extras %}
+{% block title %}Order Confirmed — Everbloom Nepal{% endblock %}
+
+{% block content %}
+<section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 text-center">
+  <div class="w-20 h-20 rounded-full bg-sage-light flex items-center justify-center mx-auto mb-6">
+    <i class="fa-solid fa-check text-eb-sage text-3xl"></i>
+  </div>
+  <h1 class="font-display text-3xl sm:text-4xl font-bold text-ink mb-3">Thank You, {{ order.full_name|default:order.user.first_name }}!</h1>
+  <p class="text-ink-soft mb-1">Your order has been placed successfully.</p>
+  <p class="text-ink-soft mb-8">Order Number: <span class="font-semibold text-ink">{{ order.order_number }}</span></p>
+
+  <div class="eb-card p-6 sm:p-8 text-left">
+    <div class="flex flex-wrap justify-between gap-4 pb-5 mb-5 border-b border-blush-deep">
+      <div>
+        <p class="text-xs text-ink-soft uppercase tracking-wide mb-1">Delivery Address</p>
+        <p class="text-sm text-ink font-medium">{{ order.street_address }}, {{ order.city }}</p>
+        <p class="text-sm text-ink-soft">{{ order.district }}, {{ order.get_province_display }}</p>
+        {% if order.landmark %}<p class="text-sm text-ink-soft">Landmark: {{ order.landmark }}</p>{% endif %}
+        <p class="text-sm text-ink-soft mt-1"><i class="fa-solid fa-phone text-xs mr-1"></i>{{ order.phone }}</p>
+      </div>
+      <div class="sm:text-right">
+        <p class="text-xs text-ink-soft uppercase tracking-wide mb-1">Payment Method</p>
+        <p class="text-sm text-ink font-medium">{{ order.get_payment_method_display }}</p>
+        <p class="text-xs mt-1 {% if order.payment_status == 'paid' %}text-eb-sage{% else %}text-eb-gold{% endif %} font-semibold uppercase">{{ order.get_payment_status_display }}</p>
+        {% if order.delivery_date %}<p class="text-xs text-ink-soft mt-2">Requested: {{ order.delivery_date|date:"M d, Y" }}</p>{% endif %}
+      </div>
+    </div>
+
+    <div class="space-y-4 mb-5">
+      {% for item in order.items.all %}
+      <div class="flex gap-3 items-center">
+        <div class="relative w-14 h-14 rounded-lg overflow-hidden bg-eb-blush flex-shrink-0">
+          <img src="{{ item.image_url }}" alt="{{ item.product_name }}" class="w-full h-full object-cover">
+          <span class="absolute -top-1.5 -right-1.5 bg-eb-rose text-white text-[0.65rem] w-5 h-5 rounded-full flex items-center justify-center font-semibold">{{ item.quantity }}</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm text-ink font-medium truncate">{{ item.product_name }}</p>
+          <p class="text-xs text-ink-soft">{{ item.price|npr }} each</p>
+        </div>
+        <p class="text-sm font-semibold text-ink">{{ item.subtotal|npr }}</p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="border-t border-blush-deep pt-4 space-y-2 text-sm">
+      <div class="flex justify-between text-ink-soft"><span>Subtotal</span><span class="text-ink font-medium">{{ order.subtotal|npr }}</span></div>
+      <div class="flex justify-between text-ink-soft"><span>Delivery Fee</span><span class="text-ink font-medium">{% if order.delivery_fee == 0 %}FREE{% else %}{{ order.delivery_fee|npr }}{% endif %}</span></div>
+      <div class="flex justify-between items-baseline pt-2">
+        <span class="font-display font-semibold text-ink">Total Paid</span>
+        <span class="font-display text-xl font-bold text-ink">{{ order.total|npr }}</span>
+      </div>
+    </div>
+  </div>
+
+  {% if order.payment_method != 'cod' %}
+  <div class="eb-card p-5 mt-6 text-left flex items-start gap-3 bg-eb-blush/40">
+    <i class="fa-solid fa-circle-info text-eb-rose-dark mt-0.5"></i>
+    <p class="text-sm text-ink-soft">Please complete your payment via <strong class="text-ink">{{ order.get_payment_method_display }}</strong> using order number <strong class="text-ink">{{ order.order_number }}</strong> as your reference. Our team will confirm your payment shortly.</p>
+  </div>
+  {% endif %}
+
+  <div class="flex flex-wrap justify-center gap-4 mt-10">
+    <a href="{% url 'shop:order_detail' order.order_number %}" class="btn btn-outline">View Order Details</a>
+    <a href="{% url 'shop:shop_list' %}" class="btn btn-primary">Continue Shopping</a>
+  </div>
+</section>
+{% endblock %}
