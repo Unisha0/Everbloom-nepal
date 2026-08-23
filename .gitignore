@@ -1,8 +1,7 @@
-venv/
-__pycache__/
-*.pyc
-db.sqlite3
-staticfiles/
-media/
+# WordPress core, WooCommerce and other third-party plugins/themes, uploads,
+# and local config — installed via wp-cli, not versioned. Only theme/ and
+# plugin/ (this repo's actual source) are tracked.
+wordpress/
+
 .DS_Store
 *.log
