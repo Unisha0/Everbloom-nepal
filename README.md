@@ -2,36 +2,58 @@
 
 *Flowers that make every moment bloom.*
 
-A modern, elegant e-commerce website for a Nepal-based online flower shop, built on **WordPress + WooCommerce**. Fresh flowers, handcrafted bouquets, and gift hampers — priced in NPR, delivered across Nepal.
+A modern, elegant e-commerce website for a Nepal-based online flower shop, built on **WordPress + WooCommerce**. Fresh flowers, handcrafted bouquets, and gift hampers — priced in NPR and delivered across Nepal.
 
-This was converted from an earlier Django prototype. Only WordPress-native code is tracked in this repo — WordPress core, WooCommerce and other third-party plugins are installed via WP-CLI, not committed.
+## Live site
+
+**Production:** https://everbloom-nepal-production.up.railway.app/
+
+- [My Account](https://everbloom-nepal-production.up.railway.app/my-account/)
+- [WordPress Admin](https://everbloom-nepal-production.up.railway.app/wp-admin/)
+
+> The production site is hosted on Railway using its free `*.up.railway.app` domain. The Railway dashboard URL is private administration infrastructure and is not the public site URL.
+
+## Release status
+
+**Current release: v1.0.0 — Railway production deployment**
+
+- WordPress and WooCommerce deployed with Docker
+- MySQL database connected through Railway private networking
+- Custom Everbloom theme and plugin enabled
+- Nepal-focused checkout, shipping, order statuses, and payment instructions configured
+- Persistent uploads volume configured at `/var/www/html/wp-content/uploads`
+
+See the full release notes in [`RELEASE.md`](RELEASE.md) and deployment details in [`DEPLOYMENT.md`](DEPLOYMENT.md).
 
 ## Features
 
-- Full product catalog (WooCommerce products/categories) — ratings & reviews, search, category & price filtering, sorting
-- Cart & AJAX add-to-cart, wishlist (login-gated)
-- Checkout with Nepal provinces, districts, delivery date, and COD / eSewa / Khalti / IME Pay / Bank Transfer
-- Nepal-only flat delivery fee that becomes free above a threshold (configurable shipping method)
-- Custom order statuses (Confirmed, Preparing Bouquet, Out for Delivery) and order numbers (`EBxx0000`)
-- Order confirmation, order history, and order status tracking (WooCommerce My Account)
-- Accounts: signup, login (by username or email — WordPress native), profile with saved address
-- WordPress/WooCommerce admin for managing catalog, orders, newsletter subscribers and contact messages
+- Full product catalog with WooCommerce products/categories, ratings, reviews, search, filtering, and sorting
+- Cart and AJAX add-to-cart
+- Login-gated wishlist
+- Checkout with Nepal provinces, districts, delivery date, and COD / eSewa / Khalti / IME Pay / Bank Transfer instructions
+- Nepal-only flat delivery fee with free delivery above a configurable threshold
+- Custom order statuses: Confirmed, Preparing Bouquet, and Out for Delivery
+- Custom order numbers such as `EBxx0000`
+- Order confirmation, order history, and order status tracking
+- Account signup, login by username or email, profile, and saved address
+- WordPress/WooCommerce administration for products, orders, newsletter subscribers, and contact messages
 
 ## Stack
 
-WordPress · WooCommerce · custom theme (`theme/everbloom`) · custom plugin (`plugin/everbloom-nepal`) · Tailwind CSS (CDN) · Font Awesome · Google Fonts — no frontend build step required.
+WordPress · WooCommerce · custom theme (`theme/everbloom`) · custom plugin (`plugin/everbloom-nepal`) · Tailwind CSS CDN · Font Awesome · Google Fonts.
 
-## Repo layout
+There is no frontend build step.
 
-```
-theme/everbloom/          Custom WooCommerce theme (tracked in git — this is the real source)
-plugin/everbloom-nepal/   Custom plugin: Nepal checkout fields, delivery pricing,
-                           eSewa/Khalti/IME Pay gateways, order statuses/numbers,
-                           wishlist, newsletter, contact form
-migration/                One-off scripts that migrated the legacy Django/SQLite
-                           catalog (categories, products, reviews) into WooCommerce
-wordpress/                WordPress core + WooCommerce + uploads (gitignored,
-                           installed locally via WP-CLI — see below)
+## Repository layout
+
+```text
+theme/everbloom/          Custom WooCommerce theme
+plugin/everbloom-nepal/   Nepal checkout, delivery, gateways, orders, wishlist, newsletter, and contact features
+migration/                One-off catalog migration scripts
+wordpress/                Local WordPress core, WooCommerce, and uploads (gitignored)
+docker/                  Railway/Docker startup script
+Dockerfile               Production WordPress image
+railway.json             Railway deployment configuration
 ```
 
 ## Local setup
@@ -39,81 +61,64 @@ wordpress/                WordPress core + WooCommerce + uploads (gitignored,
 Requires PHP 8+, MySQL/MariaDB, and [WP-CLI](https://wp-cli.org/).
 
 ```bash
-# 1. Database
 mysql -u root -e "CREATE DATABASE everbloom_wp CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
   CREATE USER 'everbloom'@'localhost' IDENTIFIED BY 'everbloom_local_dev';
   GRANT ALL PRIVILEGES ON everbloom_wp.* TO 'everbloom'@'localhost';"
 
-# 2. WordPress core (memory_limit bumped for the tarball extraction)
 mkdir wordpress
 php -d memory_limit=1024M "$(which wp)" core download --path=wordpress
 ./wpcli.sh config create --path=wordpress --dbname=everbloom_wp --dbuser=everbloom --dbpass=everbloom_local_dev --dbhost=localhost
 ./wpcli.sh core install --path=wordpress --url="http://localhost:8888" --title="Everbloom Nepal" \
   --admin_user=admin --admin_password="<choose one>" --admin_email="you@example.com"
 
-# 3. WooCommerce + this repo's theme/plugin
 ./wpcli.sh plugin install woocommerce --activate --path=wordpress
 ln -s "$(pwd)/theme/everbloom" wordpress/wp-content/themes/everbloom
 ln -s "$(pwd)/plugin/everbloom-nepal" wordpress/wp-content/plugins/everbloom-nepal
 ./wpcli.sh theme activate everbloom --path=wordpress
 ./wpcli.sh plugin activate everbloom-nepal --path=wordpress
 
-# 4. Store config (Nepal country/currency, shipping zone, gateways, wishlist page)
-./wpcli.sh option update woocommerce_coming_soon no --path=wordpress   # disable the WC 11 "coming soon" gate
+./wpcli.sh option update woocommerce_coming_soon no --path=wordpress
 ./wpcli.sh eval 'everbloom_restrict_to_nepal(); everbloom_ensure_shipping_zone(); everbloom_create_wishlist_page();' --path=wordpress
-
-# 5. Import the catalog (categories, products, reviews)
-python3 migration/export.py                                  # only needed once, already run
 ./wpcli.sh eval-file migration/import.php --path=wordpress
-
-# 6. Run it
 php -S localhost:8888 -t wordpress
 ```
 
-`wpcli.sh` is a thin wrapper around `wp` that raises PHP's memory limit and silences PHP 8.5 deprecation
-noise from WP-CLI's own bundled libraries — use it in place of `wp` for every command above.
+Local site: http://localhost:8888/  
+Local admin: http://localhost:8888/wp-admin/
 
-Visit `http://localhost:8888/`. WP Admin at `/wp-admin/`.
+## Deploying on Railway
 
-## Deploying (Railway)
+The production deployment uses the repository `Dockerfile` and `railway.json`.
 
-`Dockerfile` + `docker/start.sh` build a self-contained image (WordPress + WooCommerce +
-this repo's theme/plugin) suitable for any Docker host; `railway.json` targets
-[Railway](https://railway.app) specifically.
+Required web-service variables:
 
-```bash
-railway login                 # or: railway login --browserless
-railway init                  # create/link a Railway project
-railway add --database mysql  # provision a managed MySQL instance
-
-# Point the web service at the MySQL plugin Railway just created:
-railway variables --set 'WORDPRESS_DB_HOST=${{MySQL.MYSQLHOST}}:${{MySQL.MYSQLPORT}}' \
-  --set 'WORDPRESS_DB_USER=${{MySQL.MYSQLUSER}}' \
-  --set 'WORDPRESS_DB_PASSWORD=${{MySQL.MYSQLPASSWORD}}' \
-  --set 'WORDPRESS_DB_NAME=${{MySQL.MYSQLDATABASE}}' \
-  --set 'WP_ADMIN_USER=admin' \
-  --set 'WP_ADMIN_EMAIL=you@example.com' \
-  --set "WP_ADMIN_PASSWORD=$(openssl rand -base64 18)"
-
-railway up                    # build the Dockerfile and deploy
-railway domain                # assign a *.up.railway.app domain, prints the URL
-railway variables --set 'WP_HOME=https://<the-domain-just-printed>'
-railway up                    # redeploy so WordPress installs with the right site URL
+```text
+WORDPRESS_DB_HOST=${{MySQL.MYSQLHOST}}:${{MySQL.MYSQLPORT}}
+WORDPRESS_DB_USER=${{MySQL.MYSQLUSER}}
+WORDPRESS_DB_PASSWORD=${{MySQL.MYSQLPASSWORD}}
+WORDPRESS_DB_NAME=${{MySQL.MYSQLDATABASE}}
+WP_HOME=https://everbloom-nepal-production.up.railway.app
+WP_ADMIN_USER=admin
+WP_ADMIN_EMAIL=admin@example.com
+WP_ADMIN_PASSWORD=<store securely>
 ```
 
-`docker/start.sh` runs once on first boot: installs WordPress, activates WooCommerce/theme/plugin,
-configures the Nepal shipping zone, and imports the catalog (`migration/export.json`). Later
-deploys/restarts detect the existing install and just start Apache. Add a persistent volume
-mounted at `/var/www/html/wp-content/uploads` (Railway dashboard → service → Volumes) so
-uploaded product images survive redeploys.
+The MySQL service should communicate over Railway private networking. The WordPress service should have a persistent volume mounted at:
 
-## Notes for going to production
+```text
+/var/www/html/wp-content/uploads
+```
 
-- Point the theme/plugin symlinks (or copy them) into a real host's `wp-content/themes` and
-  `wp-content/plugins`, install WordPress + WooCommerce there the normal way, and re-run the
-  migration script (or export/import via WooCommerce's CSV product importer) against that site.
-- The eSewa/Khalti/IME Pay payment methods are manual/offline gateways (order placed immediately,
-  payment instructions shown after) — same as the original Django app, which never integrated real
-  payment APIs either. Wire up real merchant credentials before accepting live payments.
-- Category/product URLs are WooCommerce's defaults (`/product-category/slug/`, `/product/slug/`)
-  rather than the old Django routes — set up redirects if preserving old URLs for SEO matters.
+The startup script installs WordPress on the first boot, activates WooCommerce and the custom code, configures the Nepal store, and imports the catalog. Later restarts preserve the existing database and skip first-time setup.
+
+## Production notes
+
+- Keep `WP_ADMIN_PASSWORD` private; never commit it to this repository.
+- Payment methods currently provide manual/offline instructions. Configure real merchant credentials before accepting live payments.
+- Product media requires the persistent uploads volume.
+- If the public Railway domain changes, update `WP_HOME` and the WordPress `home`/`siteurl` options.
+- Railway deployment logs should include `everbloom: database is up` and `everbloom: already installed, skipping setup` on subsequent restarts.
+
+## License
+
+This project is maintained for the Everbloom Nepal online flower shop.
