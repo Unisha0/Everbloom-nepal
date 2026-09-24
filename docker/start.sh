@@ -70,4 +70,11 @@ else
   echo "everbloom: already installed, skipping setup"
 fi
 
+# Belt-and-suspenders: something between build and this container's boot
+# re-enables mpm_event alongside mpm_prefork (Apache then refuses to start
+# with "More than one MPM loaded"), even though the Dockerfile already
+# disables it at build time. Enforce it again right here.
+a2dismod mpm_event >/dev/null 2>&1 || true
+a2enmod mpm_prefork >/dev/null 2>&1 || true
+
 exec apache2-foreground
