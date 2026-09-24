@@ -5,6 +5,13 @@ FROM wordpress:php8.3-apache
 RUN apt-get update && apt-get install -y --no-install-recommends unzip less default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
+# Disable the mpm_event module at the Apache config level so it can never be
+# re-enabled. The base image may re-enable it on boot, so we lock it in config.
+RUN echo "# Explicitly disable mpm_event to prevent 'More than one MPM loaded' error" \
+    > /etc/apache2/mods-available/mpm_event.conf \
+    && a2dismod mpm_event \
+    && a2enmod mpm_prefork
+
 # Railway's managed MySQL presents a self-signed cert; mariadb-check (the
 # version bundled here) defaults --ssl-verify-server-cert to on, which
 # fails against it. This is a private network connection
