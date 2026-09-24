@@ -5,6 +5,12 @@ FROM wordpress:php8.3-apache
 RUN apt-get update && apt-get install -y --no-install-recommends unzip less default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
+# The apt-get above leaves both mpm_event and mpm_prefork enabled (a
+# Debian trigger re-enables apache2's default mpm_event), which makes
+# Apache refuse to start ("More than one MPM loaded"). mod_php requires
+# the non-threaded prefork MPM, so force that back to being the only one.
+RUN a2dismod mpm_event && a2enmod mpm_prefork
+
 # Railway's managed MySQL presents a self-signed cert; mariadb-check (the
 # version bundled here) defaults --ssl-verify-server-cert to on, which
 # fails against it. This is a private network connection
