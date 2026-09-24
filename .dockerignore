@@ -1,0 +1,6 @@
+wordpress/
+.git/
+*.docx
+db.sqlite3
+.DS_Store
+*.log

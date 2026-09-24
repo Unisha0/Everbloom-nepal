@@ -75,6 +75,38 @@ noise from WP-CLI's own bundled libraries — use it in place of `wp` for every 
 
 Visit `http://localhost:8888/`. WP Admin at `/wp-admin/`.
 
+## Deploying (Railway)
+
+`Dockerfile` + `docker/start.sh` build a self-contained image (WordPress + WooCommerce +
+this repo's theme/plugin) suitable for any Docker host; `railway.json` targets
+[Railway](https://railway.app) specifically.
+
+```bash
+railway login                 # or: railway login --browserless
+railway init                  # create/link a Railway project
+railway add --database mysql  # provision a managed MySQL instance
+
+# Point the web service at the MySQL plugin Railway just created:
+railway variables --set 'WORDPRESS_DB_HOST=${{MySQL.MYSQLHOST}}:${{MySQL.MYSQLPORT}}' \
+  --set 'WORDPRESS_DB_USER=${{MySQL.MYSQLUSER}}' \
+  --set 'WORDPRESS_DB_PASSWORD=${{MySQL.MYSQLPASSWORD}}' \
+  --set 'WORDPRESS_DB_NAME=${{MySQL.MYSQLDATABASE}}' \
+  --set 'WP_ADMIN_USER=admin' \
+  --set 'WP_ADMIN_EMAIL=you@example.com' \
+  --set "WP_ADMIN_PASSWORD=$(openssl rand -base64 18)"
+
+railway up                    # build the Dockerfile and deploy
+railway domain                # assign a *.up.railway.app domain, prints the URL
+railway variables --set 'WP_HOME=https://<the-domain-just-printed>'
+railway up                    # redeploy so WordPress installs with the right site URL
+```
+
+`docker/start.sh` runs once on first boot: installs WordPress, activates WooCommerce/theme/plugin,
+configures the Nepal shipping zone, and imports the catalog (`migration/export.json`). Later
+deploys/restarts detect the existing install and just start Apache. Add a persistent volume
+mounted at `/var/www/html/wp-content/uploads` (Railway dashboard → service → Volumes) so
+uploaded product images survive redeploys.
+
 ## Notes for going to production
 
 - Point the theme/plugin symlinks (or copy them) into a real host's `wp-content/themes` and

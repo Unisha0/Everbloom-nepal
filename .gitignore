@@ -5,3 +5,7 @@ wordpress/
 
 .DS_Store
 *.log
+
+# Stray local artifacts, not part of the app
+db.sqlite3
+*.docx
