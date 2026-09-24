@@ -5,10 +5,13 @@ FROM wordpress:php8.3-apache
 RUN apt-get update && apt-get install -y --no-install-recommends unzip less default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
-# Railway's managed MySQL presents a self-signed cert; the mariadb-client
-# tools default to verifying it, which fails. This is a plain private
-# network connection (mysql.railway.internal), so disable verification.
-RUN printf '[client]\nssl-mode=DISABLED\n' > /etc/mysql/conf.d/no-ssl-verify.cnf
+# Railway's managed MySQL presents a self-signed cert; mariadb-check (the
+# version bundled here) defaults --ssl-verify-server-cert to on, which
+# fails against it. This is a private network connection
+# (mysql.railway.internal), so disable verification. (docker/start.sh
+# itself avoids this tool for the readiness check, but this keeps ad hoc
+# `mysql`/`mariadb-check` usage, e.g. over `railway ssh`, working too.)
+RUN printf '[client]\nssl-verify-server-cert=0\n' > /etc/mysql/conf.d/no-ssl-verify.cnf
 
 # WP-CLI
 RUN curl -fsSL -o /usr/local/bin/wp \

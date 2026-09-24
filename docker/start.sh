@@ -28,7 +28,12 @@ fi
 
 echo "everbloom: waiting for database..."
 attempt=0
-until $WP db check 2>/tmp/db-check.err; do
+# wp db check shells out to mariadb-check, which on this image defaults to
+# verifying TLS certs and fails against Railway's self-signed one. Check
+# with a direct mysqli connection instead (matches how wp-cli/WordPress
+# itself talk to the DB — plain, no SSL by default) to sidestep that.
+DB_CHECK_PHP='mysqli_report(MYSQLI_REPORT_OFF); $l = @mysqli_connect(getenv("WORDPRESS_DB_HOST"), getenv("WORDPRESS_DB_USER"), getenv("WORDPRESS_DB_PASSWORD")); if (!$l) { fwrite(STDERR, mysqli_connect_error() . PHP_EOL); exit(1); } exit(0);'
+until wp eval --skip-wordpress --allow-root "$DB_CHECK_PHP" 2>/tmp/db-check.err; do
   attempt=$((attempt + 1))
   if [ "$attempt" -eq 5 ] || [ $((attempt % 15)) -eq 0 ]; then
     echo "everbloom: still waiting (attempt $attempt), last error:"
