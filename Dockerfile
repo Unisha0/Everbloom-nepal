@@ -5,6 +5,11 @@ FROM wordpress:php8.3-apache
 RUN apt-get update && apt-get install -y --no-install-recommends unzip less default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
+# Railway's managed MySQL presents a self-signed cert; the mariadb-client
+# tools default to verifying it, which fails. This is a plain private
+# network connection (mysql.railway.internal), so disable verification.
+RUN echo $'[client]\nssl-mode=DISABLED' > /etc/mysql/conf.d/no-ssl-verify.cnf
+
 # WP-CLI
 RUN curl -fsSL -o /usr/local/bin/wp \
       https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
@@ -16,9 +21,9 @@ RUN curl -fsSL -o /tmp/woocommerce.zip \
     && unzip -q /tmp/woocommerce.zip -d /usr/src/wordpress/wp-content/plugins/ \
     && rm /tmp/woocommerce.zip
 
-# This repo's actual source. The base image seeds /var/www/html from
-# /usr/src/wordpress on first boot, so anything placed here survives onto
-# the persistent volume without needing a symlink.
+# This repo's actual source. docker/start.sh seeds /var/www/html from
+# /usr/src/wordpress on first boot, so anything placed here ends up there
+# without needing a symlink.
 COPY theme/everbloom /usr/src/wordpress/wp-content/themes/everbloom
 COPY plugin/everbloom-nepal /usr/src/wordpress/wp-content/plugins/everbloom-nepal
 COPY migration /usr/src/wordpress/migration
