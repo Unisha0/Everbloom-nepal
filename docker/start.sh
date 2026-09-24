@@ -1,13 +1,30 @@
 #!/bin/bash
-# Runs as the container's CMD, after the base wordpress:php8.3-apache image's
-# own entrypoint has already generated wp-config.php from WORDPRESS_DB_* env
-# vars and seeded /var/www/html from /usr/src/wordpress. On first boot it
-# installs WordPress, activates WooCommerce/theme/plugin, and imports the
-# catalog; on every later boot (redeploys, restarts) it's a no-op and just
-# starts Apache, so it's safe to run unconditionally.
+# Runs as the container's CMD. On first boot it installs WordPress,
+# activates WooCommerce/theme/plugin, and imports the catalog; on every
+# later boot (redeploys, restarts) it's a no-op past the seeding steps and
+# just starts Apache, so it's safe to run unconditionally.
 set -euo pipefail
 
 WP="wp --path=/var/www/html --allow-root"
+
+# The base wordpress:php8.3-apache image's own docker-entrypoint.sh only
+# seeds /var/www/html and generates wp-config.php when CMD's argv[0] matches
+# apache2*/php-fpm — ours doesn't, so that logic never runs and we have to
+# do both steps ourselves.
+if [ ! -e /var/www/html/index.php ]; then
+  echo "everbloom: seeding WordPress core files..."
+  cp -a /usr/src/wordpress/. /var/www/html/
+fi
+
+if [ ! -s /var/www/html/wp-config.php ]; then
+  echo "everbloom: generating wp-config.php..."
+  $WP config create \
+    --dbname="${WORDPRESS_DB_NAME:?WORDPRESS_DB_NAME env var is required}" \
+    --dbuser="${WORDPRESS_DB_USER:?WORDPRESS_DB_USER env var is required}" \
+    --dbpass="${WORDPRESS_DB_PASSWORD:?WORDPRESS_DB_PASSWORD env var is required}" \
+    --dbhost="${WORDPRESS_DB_HOST:?WORDPRESS_DB_HOST env var is required}" \
+    --skip-check
+fi
 
 echo "everbloom: waiting for database..."
 attempt=0
