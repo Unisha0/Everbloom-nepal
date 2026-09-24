@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends unzip less defa
 # Railway's managed MySQL presents a self-signed cert; the mariadb-client
 # tools default to verifying it, which fails. This is a plain private
 # network connection (mysql.railway.internal), so disable verification.
-RUN echo $'[client]\nssl-mode=DISABLED' > /etc/mysql/conf.d/no-ssl-verify.cnf
+RUN printf '[client]\nssl-mode=DISABLED\n' > /etc/mysql/conf.d/no-ssl-verify.cnf
 
 # WP-CLI
 RUN curl -fsSL -o /usr/local/bin/wp \
