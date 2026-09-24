@@ -39,7 +39,7 @@
       "nepali_name": "सूर्यमुखी",
       "slug": "sunflowers",
       "description": "Bold, cheerful sunflowers that radiate warmth and happiness.",
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Sunflower_Field_-_Nebraska_USA.jpg/1920px-Sunflower_Field_-_Nebraska_USA.jpg",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/0/0b/Sunflower_closeup_1.jpg",
       "icon": "fa-solid fa-sun",
       "order": 4,
       "is_occasion": 0
@@ -116,7 +116,7 @@
       "nepali_name": "दशैं तिहार विशेष",
       "slug": "dashain-tihar-specials",
       "description": "Festive marigold and mixed flower specials for Dashain and Tihar celebrations.",
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Nepal_and_west_Papua_%2832750936958%29.jpg/1920px-Nepal_and_west_Papua_%2832750936958%29.jpg",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Glowing_Orange_Marigold_%28110442701%29.jpeg",
       "icon": "fa-solid fa-star-of-life",
       "order": 11,
       "is_occasion": 1
