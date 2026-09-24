@@ -2,7 +2,7 @@
 # + WooCommerce + this repo's theme/plugin, bootstrapped by docker/start.sh.
 FROM wordpress:php8.3-apache
 
-RUN apt-get update && apt-get install -y --no-install-recommends unzip less \
+RUN apt-get update && apt-get install -y --no-install-recommends unzip less default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
 # WP-CLI
