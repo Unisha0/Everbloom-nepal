@@ -10,7 +10,13 @@ set -euo pipefail
 WP="wp --path=/var/www/html --allow-root"
 
 echo "everbloom: waiting for database..."
-until $WP db check >/dev/null 2>&1; do
+attempt=0
+until $WP db check 2>/tmp/db-check.err; do
+  attempt=$((attempt + 1))
+  if [ "$attempt" -eq 5 ] || [ $((attempt % 15)) -eq 0 ]; then
+    echo "everbloom: still waiting (attempt $attempt), last error:"
+    cat /tmp/db-check.err
+  fi
   sleep 2
 done
 echo "everbloom: database is up"
